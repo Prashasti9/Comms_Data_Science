@@ -22,10 +22,9 @@ matplotlib.use("Agg")
 
 import matplotlib.patheffects as pe
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 from matplotlib.gridspec import GridSpec
-from matplotlib.patches import Annulus, Circle, FancyBboxPatch, Polygon
+from matplotlib.patches import FancyBboxPatch
 
 from pinviz.theme import GRID, INK, MUTED, PIN_RED, SUBTLE
 
@@ -49,37 +48,6 @@ EVENTS = [
     (2021.75, 431, "2021 · Reopening dip to 431M", (10, -36), "left"),
     (2025.75, 619, "2025 · Record 619M users", (-12, 18), "right"),
 ]
-
-
-def add_logo(fig, left, bottom, size):
-    """Draw a Pinterest-style badge: the pin-shaped 'P' (a white ring flowing
-    into a tapered needle) on a solid red circle with a soft shadow.
-
-    A stylised mark drawn from scratch for editorial identification — it
-    approximates the brand's pin/'P' glyph rather than copying an official
-    asset or its custom typeface.
-    """
-    ax = fig.add_axes([left, bottom, size, size * (fig.get_figwidth() / fig.get_figheight())])
-    ax.set_aspect("equal")
-    ax.axis("off")
-
-    badge = Circle((0.5, 0.5), 0.46, facecolor=PIN_RED, edgecolor="none", zorder=2)
-    badge.set_path_effects(
-        [pe.withSimplePatchShadow(offset=(2, -3), shadow_rgbFace="#9A9A9A", alpha=0.4)]
-    )
-    ax.add_patch(badge)
-
-    # The needle first (behind the ring), tapering to a point at lower-left.
-    ax.add_patch(Polygon(
-        [(0.40, 0.54), (0.60, 0.54), (0.45, 0.17)], closed=True,
-        facecolor="white", edgecolor="none", zorder=3,
-    ))
-    # The bowl of the P / head of the pin: a thick white ring.
-    ax.add_patch(Annulus((0.545, 0.60), 0.185, 0.092,
-                         facecolor="white", edgecolor="none", zorder=4))
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-    return ax
 
 
 def add_card(ax_bg, axes, pad_y=0.030, extra_top=0.0, x0=0.045, x1=0.955, pad_bottom=None):

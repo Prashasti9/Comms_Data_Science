@@ -222,7 +222,7 @@ def draw_bubbles(ax, reg):
     ax.set_xlim(-0.6, n - 0.4)
     ax.set_ylim(-1.3, 0.9)
     ax.axis("off")
-    ax.set_title("Sized by users — but the revenue lives elsewhere",
+    ax.set_title("Sized by users, but the revenue lives elsewhere",
                  loc="left", fontsize=12, fontweight="bold", color=INK, pad=18)
 
 
@@ -242,7 +242,7 @@ def main() -> None:
         8, 2, figure=fig,
         height_ratios=[0.55, 1.25, 2.7, 1.45, 1.15, 1.15, 1.4, 0.3],
         hspace=1.05, wspace=0.30,
-        left=0.19, right=0.81, top=0.95, bottom=0.035,
+        left=0.19, right=0.85, top=0.95, bottom=0.035,
     )
 
     # --- Header: serif editorial headline ---
@@ -255,7 +255,7 @@ def main() -> None:
         0, 1.0,
         "By the end of 2025, Pinterest hit a\n"
         "record 619M monthly users and\n"
-        "$4.2B in revenue — but where users\n"
+        "$4.2B in revenue, but where users\n"
         "live is not where the money is made.",
         fontsize=10.5, color=INK, va="top", linespacing=1.6,
     )

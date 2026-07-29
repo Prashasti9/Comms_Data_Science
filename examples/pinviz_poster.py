@@ -98,7 +98,7 @@ def add_card(ax_bg, axes, pad_y=0.030, extra_top=0.0, x0=0.045, x1=0.955, pad_bo
     card = FancyBboxPatch(
         (x0, y0), x1 - x0, y1 - y0,
         boxstyle="round,pad=0,rounding_size=0.012",
-        transform=ax_bg.transAxes, facecolor=CARD, edgecolor="#E4E0DB", linewidth=1.2,
+        transform=ax_bg.transAxes, facecolor=CARD, edgecolor="none",
     )
     card.set_path_effects([pe.withSimplePatchShadow(offset=(2, -3), shadow_rgbFace="#B9B4AF", alpha=0.35)])
     ax_bg.add_patch(card)
@@ -199,21 +199,48 @@ def draw_hbar(ax, cats, vals, colors, fmt, title):
     ax.set_title(title, loc="left", fontsize=12, fontweight="bold", color=INK, pad=18)
 
 
+def draw_bubbles(ax, reg):
+    """Proportional-symbol view: circles sized by users, labelled with each
+    region's revenue share — a dependency-free 'spatial' summary of the gap."""
+    order = reg.sort_values("maus_millions", ascending=False).reset_index(drop=True)
+    u = order["maus_millions"]
+    rv = order["revenue_musd"]
+    u_share = 100 * u / u.sum()
+    r_share = 100 * rv / rv.sum()
+    n = len(order)
+    xs = list(range(n))
+    sizes = (u / u.max()) * 3000 + 350
+    colors = [PIN_RED if c == "Rest of World" else MUTED for c in order["region"]]
+    ax.scatter(xs, [0] * n, s=sizes, c=colors, edgecolors="#333333",
+               linewidths=1.0, zorder=3)
+    for i in range(n):
+        ax.text(xs[i], 0, f"{u_share[i]:.0f}%", ha="center", va="center",
+                color="white", fontsize=11, fontweight="bold", zorder=4)
+        ax.annotate(f"{order['region'][i]}\n{r_share[i]:.0f}% of revenue",
+                    (xs[i], 0), xytext=(0, -42), textcoords="offset points",
+                    ha="center", va="top", fontsize=9, fontweight="bold", color=INK)
+    ax.set_xlim(-0.6, n - 0.4)
+    ax.set_ylim(-1.3, 0.9)
+    ax.axis("off")
+    ax.set_title("Sized by users — but the revenue lives elsewhere",
+                 loc="left", fontsize=12, fontweight="bold", color=INK, pad=18)
+
+
 def main() -> None:
     mau = pd.read_csv(DATA / "pinterest_mau.csv").sort_values("year")
     reg = pd.read_csv(DATA / "pinterest_regions_q4_2025.csv")
     reg_rev = reg.sort_values("revenue_musd")
     reg_arpu = reg.assign(arpu=reg["revenue_musd"] / reg["maus_millions"]).sort_values("arpu")
 
-    fig = plt.figure(figsize=(8.6, 15.2), facecolor=PAGE)
+    fig = plt.figure(figsize=(8.6, 16.8), facecolor=PAGE)
 
     # Full-canvas background layer that holds the pin-board cards.
     ax_bg = fig.add_axes([0, 0, 1, 1]); ax_bg.set_zorder(-10)
     ax_bg.axis("off"); ax_bg.set_xlim(0, 1); ax_bg.set_ylim(0, 1)
 
     gs = GridSpec(
-        7, 2, figure=fig,
-        height_ratios=[0.55, 1.25, 2.7, 1.45, 1.15, 1.15, 0.3],
+        8, 2, figure=fig,
+        height_ratios=[0.55, 1.25, 2.7, 1.45, 1.15, 1.15, 1.4, 0.3],
         hspace=1.05, wspace=0.30,
         left=0.19, right=0.81, top=0.95, bottom=0.035,
     )
@@ -249,9 +276,10 @@ def main() -> None:
     draw_hbar(ax_arpu, list(reg_arpu["region"]), list(reg_arpu["arpu"]),
               [PIN_RED if c == "US & Canada" else MUTED for c in reg_arpu["region"]],
               "${:,.2f}", "Implied revenue per user")
+    ax_bubbles = fig.add_subplot(gs[6, :]); draw_bubbles(ax_bubbles, reg)
 
     # --- Footer ---
-    ax_foot = fig.add_subplot(gs[6, :]); ax_foot.axis("off")
+    ax_foot = fig.add_subplot(gs[7, :]); ax_foot.axis("off")
     ax_foot.text(0, 0.5,
                  "Source: Pinterest Q4 & Full-Year 2025 earnings report (Feb 2026).  Built with pinviz.",
                  fontsize=9, color=SUBTLE, va="center")
@@ -263,6 +291,7 @@ def main() -> None:
     add_card(ax_bg, [ax_split], extra_top=0.045)
     add_card(ax_bg, [ax_rev], extra_top=0.045)
     add_card(ax_bg, [ax_arpu], extra_top=0.045)
+    add_card(ax_bg, [ax_bubbles], extra_top=0.045)
 
     fig.savefig(OUT / "pinviz_poster.pdf", bbox_inches="tight", facecolor=fig.get_facecolor())
     fig.savefig(OUT / "pinviz_poster.png", dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())

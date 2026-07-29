@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.gridspec import GridSpec
-from matplotlib.patches import Annulus, Circle, FancyBboxPatch, Polygon, Rectangle
+from matplotlib.patches import Annulus, Circle, FancyBboxPatch, Polygon
 
 from pinviz.theme import GRID, INK, MUTED, PIN_RED, SUBTLE
 
@@ -104,14 +104,6 @@ def add_card(ax_bg, axes, pad_y=0.030, extra_top=0.0, x0=0.045, x1=0.955, pad_bo
     ax_bg.add_patch(card)
 
 
-def add_frame(ax, color="#C4BFB9"):
-    """Draw a thin rectangular boundary around a chart's plot area."""
-    ax.add_patch(Rectangle(
-        (0, 0), 1, 1, transform=ax.transAxes, fill=False,
-        edgecolor=color, linewidth=1.2, zorder=5, clip_on=False,
-    ))
-
-
 def draw_hero(ax, mau):
     x, y = mau["year"], mau["maus_millions"]
     ax.fill_between(x, y, color=PIN_RED_FILL, alpha=0.6, zorder=1)
@@ -119,8 +111,10 @@ def draw_hero(ax, mau):
     ax.set_ylim(0, 700)
     ax.set_xlim(2018.6, 2025.7)
     ax.set_facecolor("none")
-    for s in ax.spines.values():
-        s.set_visible(False)
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    for side in ("left", "bottom"):
+        ax.spines[side].set_color(MUTED)
     ax.tick_params(length=0, colors=SUBTLE, labelsize=10)
     ax.grid(axis="y", color=GRID, linewidth=1)
     ax.set_axisbelow(True)
@@ -152,7 +146,6 @@ def draw_hero(ax, mau):
                 markeredgecolor="white", markeredgewidth=1.6, zorder=7)
     ax.set_title("A decade of growth", loc="left", fontsize=12,
                  fontweight="bold", color=INK, pad=10)
-    add_frame(ax)
 
 
 def draw_share_gap(ax, reg):
@@ -169,8 +162,10 @@ def draw_share_gap(ax, reg):
     ax.set_facecolor("none")
     left_u = left_r = 0
     for i, c in enumerate(cats):
-        ax.barh("Users", u_pct[i], left=left_u, height=0.58, color=color_for[c])
-        ax.barh("Revenue", r_pct[i], left=left_r, height=0.58, color=color_for[c])
+        ax.barh("Users", u_pct[i], left=left_u, height=0.55, color=color_for[c],
+                edgecolor="white", linewidth=1.5)
+        ax.barh("Revenue", r_pct[i], left=left_r, height=0.55, color=color_for[c],
+                edgecolor="white", linewidth=1.5)
         if u_pct[i] > 6:
             ax.text(left_u + u_pct[i] / 2, 0, f"{u_pct[i]:.0f}%", ha="center", va="center",
                     fontsize=9, color="white" if c == "Rest of World" else INK, fontweight="bold")
@@ -185,23 +180,23 @@ def draw_share_gap(ax, reg):
         ax.spines[side].set_visible(False)
     ax.set_title("Rest of World is 58% of users but 7% of revenue",
                  loc="left", fontsize=12, fontweight="bold", color=INK, pad=8)
-    add_frame(ax)
 
 
 def draw_hbar(ax, cats, vals, colors, fmt, title):
     ax.set_facecolor("none")
-    bars = ax.barh(cats, vals, height=0.6, color=colors)
+    bars = ax.barh(cats, vals, height=0.55, color=colors,
+                   edgecolor="#333333", linewidth=1.0)
     ax.set_xticks([])
     pad = max(vals) * 0.02
     for bar, v in zip(bars, vals):
         ax.text(bar.get_width() + pad, bar.get_y() + bar.get_height() / 2,
                 fmt.format(v), va="center", ha="left", fontsize=10, fontweight="bold", color=INK)
     ax.tick_params(length=0, colors=INK, labelsize=10)
-    for s in ax.spines.values():
-        s.set_visible(False)
+    for side in ("top", "right", "bottom"):
+        ax.spines[side].set_visible(False)
+    ax.spines["left"].set_color(MUTED)
     ax.margins(x=0.18)
     ax.set_title(title, loc="left", fontsize=12, fontweight="bold", color=INK, pad=8)
-    add_frame(ax)
 
 
 def main() -> None:
@@ -210,7 +205,7 @@ def main() -> None:
     reg_rev = reg.sort_values("revenue_musd")
     reg_arpu = reg.assign(arpu=reg["revenue_musd"] / reg["maus_millions"]).sort_values("arpu")
 
-    fig = plt.figure(figsize=(8.6, 14.0), facecolor=PAGE)
+    fig = plt.figure(figsize=(8.6, 15.2), facecolor=PAGE)
 
     # Full-canvas background layer that holds the pin-board cards.
     ax_bg = fig.add_axes([0, 0, 1, 1]); ax_bg.set_zorder(-10)
@@ -219,7 +214,7 @@ def main() -> None:
     gs = GridSpec(
         7, 2, figure=fig,
         height_ratios=[0.55, 1.05, 2.7, 1.45, 1.15, 1.15, 0.3],
-        hspace=0.7, wspace=0.30,
+        hspace=1.0, wspace=0.30,
         left=0.16, right=0.84, top=0.95, bottom=0.035,
     )
 

@@ -1,68 +1,91 @@
-# simple_viz
+# pinviz
 
-A small, friendly wrapper around [matplotlib](https://matplotlib.org/) for
-creating common plots with a minimum of boilerplate. `simple_viz` gives you
-short, consistent helpers for the charts you reach for most often — line, bar,
-scatter, and histogram — while still returning the underlying matplotlib
-`Axes` so you can customise the result however you like.
+**Opinionated, communication-first charts that tell one data story.**
 
-## Installation
+`pinviz` is a small Python visualization library built for a communication
+course. Every function makes deliberate design decisions drawn from the
+[Evergreen Data Visualization Checklist](https://stephanieevergreen.com/data-visualization-checklist/)
+and maps to a family in the *Quantitative Chart Chooser*. The running example
+is **Pinterest's 2025 results** — a company with a huge global audience but
+very unevenly distributed revenue.
 
-Install from a local checkout (uses a `src/` layout):
+Each function returns a matplotlib `Figure`, so you can `savefig` it in any
+format (PNG, PDF, SVG).
+
+## Why it looks the way it does
+
+The design is the point, not an afterthought:
+
+- **One highlight colour.** Pinterest red (`#E60023`) marks the one thing the
+  reader should look at; everything else is muted grey. Colour directs
+  attention instead of decorating.
+- **Titles state the takeaway.** "Rest of World is 58% of users but just 7% of
+  revenue" — not "Users and revenue by region." The chart answers *so what?*
+  before you read the axes.
+- **Honest axes.** Bars and lines start at zero; percentages are normalised to
+  100% so composition is compared fairly.
+- **No chartjunk.** Top/right spines removed, tick marks dropped, gridlines a
+  single very light grey, values labelled directly on the marks so legends and
+  busy axes disappear.
+
+## Install
 
 ```bash
-pip install .
+python -m pip install -e .
 ```
 
-For development, install with the optional test dependencies in editable mode:
+This installs `pinviz` and its dependencies (`matplotlib`, `pandas`).
+
+## Use
+
+```python
+import pandas as pd
+import pinviz
+
+mau = pd.read_csv("data/pinterest_mau.csv")
+fig = pinviz.growth_line(
+    mau, "year", "maus_millions",
+    title="Pinterest's audience hit a record 619M in 2025",
+    subtitle="Global monthly active users, Q4 of each year (millions)",
+    annotate=(2021, "users fell as pandemic\nlockdowns eased"),
+)
+fig.savefig("mau.png", dpi=150, bbox_inches="tight")
+```
+
+Generate the whole gallery (5 charts + a combined PDF) at once:
 
 ```bash
-pip install -e ".[dev]"
+python examples/pinviz_gallery.py
 ```
 
-## Usage
+## The library
 
-```python
-import matplotlib.pyplot as plt
-import simple_viz as sv
+| Function | Chart Chooser family | Answers |
+| --- | --- | --- |
+| `big_number(value, unit, label, ...)` | Single important number | How big is the headline? |
+| `growth_line(df, x, y, ...)` | Change over time | Which way is the trend going? |
+| `revenue_bar(df, category, value, ...)` | Comparison | Who contributes the most? |
+| `share_gap(df, category, part_a, part_b, ...)` | Parts of a whole | Where do users and revenue diverge? |
+| `arpu_bar(df, category, revenue, users, ...)` | Comparison / ratio | How well is each region monetised? |
 
-# Line plot
-sv.line_plot([1, 2, 3, 4], [10, 20, 15, 30], title="Line", xlabel="x", ylabel="y")
+## Data
 
-# Bar chart
-sv.bar_plot(["a", "b", "c"], [3, 7, 2], title="Bar")
+All figures are **real**, from Pinterest's Q4 & Full-Year 2025 earnings report
+(released February 12, 2026). See [`data/SOURCES.md`](data/SOURCES.md) for the
+exact numbers and citations.
 
-# Scatter plot
-sv.scatter_plot([1, 2, 3], [4, 1, 5], title="Scatter")
+## Tests
 
-# Histogram
-sv.histogram([1, 1, 2, 3, 3, 3, 4], bins=4, title="Histogram")
-
-plt.show()
+```bash
+python -m pip install -e ".[dev]"
+python -m pytest
 ```
-
-Every helper returns the matplotlib `Axes` it drew on, so you can keep working
-with it:
-
-```python
-ax = sv.line_plot([0, 1, 2], [0, 1, 4], title="y = x squared")
-ax.grid(True)
-ax.legend(["squared"])
-```
-
-## API
-
-| Function | Description |
-| --- | --- |
-| `line_plot(x, y, ...)` | Line plot of `y` against `x`. |
-| `bar_plot(categories, values, ...)` | Vertical bar chart. |
-| `scatter_plot(x, y, ...)` | Scatter plot of `y` against `x`. |
-| `histogram(data, bins=10, ...)` | Histogram of `data`. |
-
-All functions accept the common keyword arguments `title`, `xlabel`, `ylabel`,
-and `ax`, and forward any additional keyword arguments to the corresponding
-matplotlib method.
 
 ## License
 
-Released under the [MIT License](LICENSE).
+[MIT](LICENSE)
+
+---
+
+*This repository also contains an earlier utility module, `simple_viz`
+(thin matplotlib wrappers), kept for reference under `src/simple_viz/`.*

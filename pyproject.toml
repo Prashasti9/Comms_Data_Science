@@ -3,16 +3,16 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "simple_viz"
+name = "pinviz"
 version = "0.1.0"
-description = "A small, friendly wrapper around matplotlib for quick data visualizations."
+description = "Opinionated, communication-first charts telling the Pinterest 2025 data story."
 readme = "README.md"
 requires-python = ">=3.8"
 license = { file = "LICENSE" }
 authors = [
     { name = "Prashasti Srivastava", email = "psrivastava7@dons.usfca.edu" },
 ]
-keywords = ["visualization", "matplotlib", "plotting", "charts"]
+keywords = ["visualization", "matplotlib", "pandas", "data-storytelling", "charts"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -27,12 +27,12 @@ classifiers = [
 ]
 dependencies = [
     "matplotlib>=3.5",
+    "pandas>=1.3",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
-    "pandas>=1.3",
 ]
 
 [project.urls]

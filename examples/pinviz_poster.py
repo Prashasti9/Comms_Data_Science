@@ -47,7 +47,7 @@ EVENTS = [
     (2019, 335, "2019 · IPO at 335M users", (10, -36), "left"),
     (2020, 459, "2020 · Pandemic surge, +37% to 459M", (10, 34), "left"),
     (2021, 431, "2021 · Reopening dip to 431M", (10, -36), "left"),
-    (2025, 619, "2025 · Record 619M users", (-10, 30), "right"),
+    (2025, 619, "2025 · Record 619M users", (-12, 18), "right"),
 ]
 
 
@@ -82,16 +82,18 @@ def add_logo(fig, left, bottom, size):
     return ax
 
 
-def add_card(ax_bg, axes, pad_y=0.030, extra_top=0.0, x0=0.045, x1=0.955):
+def add_card(ax_bg, axes, pad_y=0.030, extra_top=0.0, x0=0.045, x1=0.955, pad_bottom=None):
     """Draw a full-width rounded white card with a soft shadow behind ``axes``.
 
     Cards are drawn into ``ax_bg`` — a full-canvas axes pinned behind
     everything (negative zorder) — so they never paint over the charts. The
     horizontal extent is fixed (``x0``/``x1``) so every card aligns and left-
-    side axis labels always fall inside the card.
+    side axis labels always fall inside the card. ``pad_bottom`` overrides the
+    bottom padding independently (e.g. to clear text that overflows an axis).
     """
+    pad_bottom = pad_y if pad_bottom is None else pad_bottom
     boxes = [ax.get_position() for ax in axes]
-    y0 = min(b.y0 for b in boxes) - pad_y
+    y0 = min(b.y0 for b in boxes) - pad_bottom
     y1 = max(b.y1 for b in boxes) + pad_y + extra_top
     card = FancyBboxPatch(
         (x0, y0), x1 - x0, y1 - y0,
@@ -142,8 +144,8 @@ def draw_hero(ax, mau):
         # Emphasise the anchor point with a ringed dot.
         ax.plot([yr], [val], marker="o", markersize=8, markerfacecolor=PIN_RED,
                 markeredgecolor="white", markeredgewidth=1.6, zorder=7)
-    ax.set_title("A decade of growth, in monthly active users",
-                 loc="left", fontsize=13, fontweight="bold", color=INK, pad=10)
+    ax.set_title("A decade of growth", loc="left", fontsize=12,
+                 fontweight="bold", color=INK, pad=10)
 
 
 def draw_share_gap(ax, reg):
@@ -200,7 +202,7 @@ def main() -> None:
     reg_rev = reg.sort_values("revenue_musd")
     reg_arpu = reg.assign(arpu=reg["revenue_musd"] / reg["maus_millions"]).sort_values("arpu")
 
-    fig = plt.figure(figsize=(11, 15.5), facecolor=PAGE)
+    fig = plt.figure(figsize=(8.6, 14.0), facecolor=PAGE)
 
     # Full-canvas background layer that holds the pin-board cards.
     ax_bg = fig.add_axes([0, 0, 1, 1]); ax_bg.set_zorder(-10)
@@ -214,8 +216,8 @@ def main() -> None:
     )
 
     # --- Header: logo + serif wordmark headline ---
-    add_logo(fig, left=0.09, bottom=0.930, size=0.037)
-    fig.text(0.155, 0.947, "Pinterest's split screen", fontsize=37,
+    add_logo(fig, left=0.09, bottom=0.928, size=0.042)
+    fig.text(0.165, 0.947, "Pinterest's split screen", fontsize=27,
              fontweight="bold", family="serif", color=INK, va="center")
 
     # --- Deck + big numbers ---
@@ -227,13 +229,13 @@ def main() -> None:
         "billion in annual revenue. But where those\n"
         "users live looks nothing like where the money\n"
         "comes from — the gap that defines its next decade.",
-        fontsize=12, color=INK, va="top", linespacing=1.55,
+        fontsize=10.5, color=INK, va="top", linespacing=1.55,
     )
     ax_big = fig.add_subplot(gs[1, 1]); ax_big.axis("off")
-    ax_big.text(0.05, 0.90, "619M", fontsize=29, fontweight="bold", color=PIN_RED, va="center")
-    ax_big.text(0.05, 0.66, "monthly active users  (+12% YoY)", fontsize=11, color=SUBTLE, va="center")
-    ax_big.text(0.05, 0.36, "$4.2B", fontsize=29, fontweight="bold", color=INK, va="center")
-    ax_big.text(0.05, 0.12, "FY2025 revenue  (+16% YoY)", fontsize=11, color=SUBTLE, va="center")
+    ax_big.text(0.05, 0.90, "619M", fontsize=24, fontweight="bold", color=PIN_RED, va="center")
+    ax_big.text(0.05, 0.64, "monthly active users (+12% YoY)", fontsize=9.5, color=SUBTLE, va="center")
+    ax_big.text(0.05, 0.36, "$4.2B", fontsize=24, fontweight="bold", color=INK, va="center")
+    ax_big.text(0.05, 0.10, "FY2025 revenue (+16% YoY)", fontsize=9.5, color=SUBTLE, va="center")
 
     # --- Charts (each a full-width panel) ---
     ax_hero = fig.add_subplot(gs[2, :]); draw_hero(ax_hero, mau)
@@ -255,7 +257,7 @@ def main() -> None:
 
     # --- Pin-board cards behind each panel (drawn after layout is known) ---
     fig.canvas.draw()
-    add_card(ax_bg, [ax_deck, ax_big], pad_y=0.055, extra_top=0.010)
+    add_card(ax_bg, [ax_deck, ax_big], pad_y=0.022, extra_top=0.010, pad_bottom=0.05)
     add_card(ax_bg, [ax_hero], extra_top=0.03)
     add_card(ax_bg, [ax_split], extra_top=0.03)
     add_card(ax_bg, [ax_rev], extra_top=0.03)

@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.gridspec import GridSpec
-from matplotlib.patches import FancyBboxPatch
+from matplotlib.patches import Annulus, Circle, FancyBboxPatch, Polygon
 
 from pinviz.theme import GRID, INK, MUTED, PIN_RED, SUBTLE
 
@@ -52,38 +52,31 @@ EVENTS = [
 
 
 def add_logo(fig, left, bottom, size):
-    """Draw a Pinterest-style app-icon mark: a white 'P' on a red-gradient
-    squircle with a soft shadow.
+    """Draw a Pinterest-style badge: the pin-shaped 'P' (a white ring flowing
+    into a tapered needle) on a solid red circle with a soft shadow.
 
     A stylised mark drawn from scratch for editorial identification — it
-    approximates the real app icon's rounded-square shape, red gradient and
-    drop shadow rather than copying an official asset.
+    approximates the brand's pin/'P' glyph rather than copying an official
+    asset or its custom typeface.
     """
     ax = fig.add_axes([left, bottom, size, size * (fig.get_figwidth() / fig.get_figheight())])
     ax.set_aspect("equal")
     ax.axis("off")
 
-    # Rounded-square ("squircle") body with a soft drop shadow.
-    squircle = FancyBboxPatch(
-        (0.14, 0.14), 0.72, 0.72,
-        boxstyle="round,pad=0,rounding_size=0.28",
-        transform=ax.transAxes, facecolor=PIN_RED, edgecolor="none", zorder=2,
+    badge = Circle((0.5, 0.5), 0.46, facecolor=PIN_RED, edgecolor="none", zorder=2)
+    badge.set_path_effects(
+        [pe.withSimplePatchShadow(offset=(2, -3), shadow_rgbFace="#9A9A9A", alpha=0.4)]
     )
-    squircle.set_path_effects(
-        [pe.withSimplePatchShadow(offset=(2, -3), shadow_rgbFace="#9A9A9A", alpha=0.45)]
-    )
-    ax.add_patch(squircle)
+    ax.add_patch(badge)
 
-    # Top-lighter vertical gradient, clipped to the squircle.
-    top, bot = np.array([0.95, 0.36, 0.41]), np.array([0.80, 0.09, 0.13])
-    t = np.linspace(0, 1, 256).reshape(-1, 1)
-    grad = (top * (1 - t) + bot * t).reshape(256, 1, 3)
-    im = ax.imshow(grad, extent=(0.14, 0.86, 0.14, 0.86), origin="upper",
-                   aspect="auto", zorder=3)
-    im.set_clip_path(squircle)
-
-    ax.text(0.5, 0.47, "P", ha="center", va="center", color="white",
-            fontsize=size * 620, fontweight="bold", zorder=4)
+    # The needle first (behind the ring), tapering to a point at lower-left.
+    ax.add_patch(Polygon(
+        [(0.40, 0.54), (0.60, 0.54), (0.45, 0.17)], closed=True,
+        facecolor="white", edgecolor="none", zorder=3,
+    ))
+    # The bowl of the P / head of the pin: a thick white ring.
+    ax.add_patch(Annulus((0.545, 0.60), 0.185, 0.092,
+                         facecolor="white", edgecolor="none", zorder=4))
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     return ax

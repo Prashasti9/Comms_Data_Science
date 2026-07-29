@@ -150,6 +150,25 @@ def draw_hero(ax, mau):
                  fontweight="bold", color=INK, pad=18)
 
 
+def add_callout(fig, ax_bg, ax, text, x0=0.045, x1=0.955):
+    """A full-width red insight band with a white takeaway line — adds colour
+    and a punchy 'so what' without touching the charts. Drawn into ax_bg (full
+    card width) using ``ax`` only to locate the row vertically."""
+    ax.axis("off")
+    b = ax.get_position()
+    y0, y1 = b.y0, b.y1
+    band = FancyBboxPatch(
+        (x0, y0), x1 - x0, y1 - y0, boxstyle="round,pad=0,rounding_size=0.02",
+        transform=ax_bg.transAxes, facecolor=PIN_RED, edgecolor="none",
+    )
+    band.set_path_effects(
+        [pe.withSimplePatchShadow(offset=(2, -3), shadow_rgbFace="#B9B4AF", alpha=0.35)]
+    )
+    ax_bg.add_patch(band)
+    fig.text((x0 + x1) / 2, (y0 + y1) / 2, text, ha="center", va="center",
+             color="white", fontsize=12.5, fontweight="bold")
+
+
 def draw_revenue(ax, rev):
     """Annual revenue as vertical bars — the 'dollars' half of the growth
     story, to sit alongside the users line."""
@@ -232,21 +251,23 @@ def main() -> None:
     reg_rev = reg.sort_values("revenue_musd")
     reg_arpu = reg.assign(arpu=reg["revenue_musd"] / reg["maus_millions"]).sort_values("arpu")
 
-    fig = plt.figure(figsize=(8.6, 17.2), facecolor=PAGE)
+    fig = plt.figure(figsize=(8.6, 18.0), facecolor=PAGE)
 
     # Full-canvas background layer that holds the pin-board cards.
     ax_bg = fig.add_axes([0, 0, 1, 1]); ax_bg.set_zorder(-10)
     ax_bg.axis("off"); ax_bg.set_xlim(0, 1); ax_bg.set_ylim(0, 1)
 
     gs = GridSpec(
-        8, 2, figure=fig,
-        height_ratios=[0.55, 1.25, 2.7, 1.7, 1.45, 1.15, 1.15, 0.3],
+        9, 2, figure=fig,
+        height_ratios=[0.55, 1.25, 2.7, 1.7, 1.45, 1.15, 1.15, 0.75, 0.3],
         hspace=1.05, wspace=0.30,
         left=0.19, right=0.85, top=0.95, bottom=0.035,
     )
 
-    # --- Header: serif editorial headline ---
-    fig.text(0.11, 0.947, "Pinterest's split screen", fontsize=27,
+    # --- Header: red kicker + serif editorial headline ---
+    fig.text(0.11, 0.963, "PINTEREST  ·  FULL-YEAR 2025 RESULTS", fontsize=9.5,
+             fontweight="bold", color=PIN_RED, va="center")
+    fig.text(0.11, 0.941, "Pinterest's split screen", fontsize=27,
              fontweight="bold", family="serif", color=INK, va="center")
 
     # --- Deck + big numbers ---
@@ -277,8 +298,10 @@ def main() -> None:
     draw_hbar(ax_arpu, list(reg_arpu["region"]), list(reg_arpu["arpu"]),
               [PIN_RED if c == "US & Canada" else MUTED for c in reg_arpu["region"]],
               "${:,.2f}", "Implied revenue per user")
+    ax_callout = fig.add_subplot(gs[7, :]); ax_callout.axis("off")
+
     # --- Footer ---
-    ax_foot = fig.add_subplot(gs[7, :]); ax_foot.axis("off")
+    ax_foot = fig.add_subplot(gs[8, :]); ax_foot.axis("off")
     ax_foot.text(0, 0.5,
                  "Source: Pinterest Q4 & Full-Year 2025 earnings report (Feb 2026).  Built with pinviz.",
                  fontsize=9, color=SUBTLE, va="center")
@@ -291,6 +314,8 @@ def main() -> None:
     add_card(ax_bg, [ax_split], extra_top=0.045)
     add_card(ax_bg, [ax_rev], extra_top=0.045)
     add_card(ax_bg, [ax_arpu], extra_top=0.045)
+    add_callout(fig, ax_bg, ax_callout,
+                "A US & Canada user is worth about 35x a Rest-of-World user.")
 
     fig.savefig(OUT / "pinviz_poster.pdf", bbox_inches="tight", facecolor=fig.get_facecolor())
     fig.savefig(OUT / "pinviz_poster.png", dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())

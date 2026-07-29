@@ -96,7 +96,7 @@ def add_card(ax_bg, axes, pad_y=0.030, extra_top=0.0, x0=0.045, x1=0.955):
     card = FancyBboxPatch(
         (x0, y0), x1 - x0, y1 - y0,
         boxstyle="round,pad=0,rounding_size=0.012",
-        transform=ax_bg.transAxes, facecolor=CARD, edgecolor="none",
+        transform=ax_bg.transAxes, facecolor=CARD, edgecolor="#E4E0DB", linewidth=1.2,
     )
     card.set_path_effects([pe.withSimplePatchShadow(offset=(2, -3), shadow_rgbFace="#B9B4AF", alpha=0.35)])
     ax_bg.add_patch(card)
@@ -255,7 +255,7 @@ def main() -> None:
 
     # --- Pin-board cards behind each panel (drawn after layout is known) ---
     fig.canvas.draw()
-    add_card(ax_bg, [ax_deck, ax_big], extra_top=0.005)
+    add_card(ax_bg, [ax_deck, ax_big], pad_y=0.055, extra_top=0.010)
     add_card(ax_bg, [ax_hero], extra_top=0.03)
     add_card(ax_bg, [ax_split], extra_top=0.03)
     add_card(ax_bg, [ax_rev], extra_top=0.03)

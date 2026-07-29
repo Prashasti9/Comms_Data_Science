@@ -22,10 +22,10 @@ matplotlib.use("Agg")
 
 import matplotlib.patheffects as pe
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from matplotlib.gridspec import GridSpec
-from matplotlib.patches import Circle, FancyBboxPatch
-from matplotlib.transforms import Bbox
+from matplotlib.patches import FancyBboxPatch
 
 from pinviz.theme import GRID, INK, MUTED, PIN_RED, SUBTLE
 
@@ -41,28 +41,51 @@ CARD = "#FFFFFF"
 PIN_RED_FILL = "#F7C6CE"
 GREYS = ["#8A8A8A", "#BDBDBD"]
 
+# year, value, label, (dx, dy) offset in points, horizontal alignment.
+# The last event is the focal point and gets a red chip; the rest are white.
 EVENTS = [
-    (2019, 335, "2019  IPO at 335M users", (14, 8)),
-    (2020, 459, "2020  Pandemic surge: +37% to 459M", (14, 8)),
-    (2021, 431, "2021  Reopening dip to 431M", (10, -34)),
-    (2025, 619, "2025  Record 619M users", (-6, 14)),
+    (2019, 335, "2019 · IPO at 335M users", (10, -36), "left"),
+    (2020, 459, "2020 · Pandemic surge, +37% to 459M", (10, 34), "left"),
+    (2021, 431, "2021 · Reopening dip to 431M", (10, -36), "left"),
+    (2025, 619, "2025 · Record 619M users", (-10, 30), "right"),
 ]
 
 
 def add_logo(fig, left, bottom, size):
-    """Draw a Pinterest-style logo mark: white 'P' in a red circle.
+    """Draw a Pinterest-style app-icon mark: a white 'P' on a red-gradient
+    squircle with a soft shadow.
 
-    A simple stylised mark for editorial identification, drawn from scratch
-    rather than an official asset.
+    A stylised mark drawn from scratch for editorial identification — it
+    approximates the real app icon's rounded-square shape, red gradient and
+    drop shadow rather than copying an official asset.
     """
     ax = fig.add_axes([left, bottom, size, size * (fig.get_figwidth() / fig.get_figheight())])
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
     ax.set_aspect("equal")
     ax.axis("off")
-    ax.add_patch(Circle((0.5, 0.5), 0.5, color=PIN_RED, zorder=2))
+
+    # Rounded-square ("squircle") body with a soft drop shadow.
+    squircle = FancyBboxPatch(
+        (0.14, 0.14), 0.72, 0.72,
+        boxstyle="round,pad=0,rounding_size=0.28",
+        transform=ax.transAxes, facecolor=PIN_RED, edgecolor="none", zorder=2,
+    )
+    squircle.set_path_effects(
+        [pe.withSimplePatchShadow(offset=(2, -3), shadow_rgbFace="#9A9A9A", alpha=0.45)]
+    )
+    ax.add_patch(squircle)
+
+    # Top-lighter vertical gradient, clipped to the squircle.
+    top, bot = np.array([0.95, 0.36, 0.41]), np.array([0.80, 0.09, 0.13])
+    t = np.linspace(0, 1, 256).reshape(-1, 1)
+    grad = (top * (1 - t) + bot * t).reshape(256, 1, 3)
+    im = ax.imshow(grad, extent=(0.14, 0.86, 0.14, 0.86), origin="upper",
+                   aspect="auto", zorder=3)
+    im.set_clip_path(squircle)
+
     ax.text(0.5, 0.47, "P", ha="center", va="center", color="white",
-            fontsize=size * 850, fontweight="bold", family="serif", zorder=3)
+            fontsize=size * 620, fontweight="bold", zorder=4)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
     return ax
 
 
@@ -103,13 +126,29 @@ def draw_hero(ax, mau):
     ax.set_xticks(list(x))
     ax.set_yticks([0, 200, 400, 600])
     ax.set_ylabel("Monthly active users (millions)", color=SUBTLE, fontsize=10)
-    for yr, val, label, (dx, dy) in EVENTS:
-        ax.annotate(
+    for yr, val, label, (dx, dy), ha in EVENTS:
+        focal = yr == 2025
+        ann = ax.annotate(
             label, xy=(yr, val), xytext=(dx, dy), textcoords="offset points",
-            fontsize=9.5, color=INK, fontweight="bold",
-            ha="left" if dx >= 0 else "right",
-            arrowprops=dict(arrowstyle="-", color=MUTED, linewidth=1),
+            fontsize=9.5, fontweight="bold", ha=ha, va="center",
+            color="white" if focal else INK, zorder=6,
+            bbox=dict(
+                boxstyle="round,pad=0.5,rounding_size=0.9",
+                facecolor=PIN_RED if focal else "white",
+                edgecolor=PIN_RED if focal else "#E4E1DE", linewidth=1.2,
+            ),
+            arrowprops=dict(
+                arrowstyle="-", color="#C9C4BF", linewidth=1.1,
+                connectionstyle="arc3,rad=0.15", shrinkA=4, shrinkB=6,
+            ),
         )
+        # Soft shadow on the chip so it lifts off the card, like a UI pill.
+        ann.get_bbox_patch().set_path_effects(
+            [pe.withSimplePatchShadow(offset=(1.5, -1.5), shadow_rgbFace="#B9B4AF", alpha=0.25)]
+        )
+        # Emphasise the anchor point with a ringed dot.
+        ax.plot([yr], [val], marker="o", markersize=8, markerfacecolor=PIN_RED,
+                markeredgecolor="white", markeredgewidth=1.6, zorder=7)
     ax.set_title("A decade of growth, in monthly active users",
                  loc="left", fontsize=13, fontweight="bold", color=INK, pad=10)
 

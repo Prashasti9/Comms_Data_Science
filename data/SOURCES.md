@@ -27,6 +27,15 @@ report (released February 12, 2026) and corroborating coverage.
 The share-of-users vs share-of-revenue split is computed in code from this
 table, so nothing is hand-entered twice.
 
+## `pinterest_mau_quarterly.csv` — global MAUs by quarter (millions)
+
+Quarter-end global MAUs, Q1 2019 – Q4 2025 (28 points), from Pinterest's
+quarterly earnings releases (8-K / 10-Q) and investor relations. The four
+Q4 values match `pinterest_mau.csv` exactly (335 / 459 / 431 / 450 / 498 /
+553 / 619); several intermediate quarters (e.g. Q1 2021 = 478, Q4 2021 =
+431, Q2 2024 = 522, Q3 2024 = 537, and all four 2025 quarters) were
+re-verified against reporting. Used for the granular growth line.
+
 ## `pinterest_revenue.csv` — full-year revenue ($M)
 
 | Year | Revenue ($M) | YoY |

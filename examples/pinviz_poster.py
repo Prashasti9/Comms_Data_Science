@@ -41,13 +41,13 @@ CARD = "#FFFFFF"
 PIN_RED_FILL = "#F7C6CE"
 GREYS = ["#8A8A8A", "#BDBDBD"]
 
-# year, value, label, (dx, dy) offset in points, horizontal alignment.
-# The last event is the focal point and gets a red chip; the rest are white.
+# x (decimal year, Q4 = year+0.75), value, label, (dx, dy) offset in points,
+# alignment. The last event is the focal point and gets a red chip.
 EVENTS = [
-    (2019, 335, "2019 · IPO at 335M users", (10, -36), "left"),
-    (2020, 459, "2020 · Pandemic surge, +37% to 459M", (10, 34), "left"),
-    (2021, 431, "2021 · Reopening dip to 431M", (10, -36), "left"),
-    (2025, 619, "2025 · Record 619M users", (-12, 18), "right"),
+    (2019.75, 335, "2019 · IPO year, 335M users", (10, -36), "left"),
+    (2020.75, 459, "2020 · Pandemic surge to 459M", (10, 34), "left"),
+    (2021.75, 431, "2021 · Reopening dip to 431M", (10, -36), "left"),
+    (2025.75, 619, "2025 · Record 619M users", (-12, 18), "right"),
 ]
 
 
@@ -105,11 +105,13 @@ def add_card(ax_bg, axes, pad_y=0.030, extra_top=0.0, x0=0.045, x1=0.955, pad_bo
 
 
 def draw_hero(ax, mau):
-    x, y = mau["year"], mau["maus_millions"]
+    # Quarterly series: decimal x with Q4 at year+0.75.
+    x = mau["year"] + (mau["quarter"] - 1) * 0.25
+    y = mau["maus_millions"]
     ax.fill_between(x, y, color=PIN_RED_FILL, alpha=0.6, zorder=1)
-    ax.plot(x, y, color=PIN_RED, linewidth=3, marker="o", markersize=6, zorder=3)
+    ax.plot(x, y, color=PIN_RED, linewidth=2.5, zorder=3)
     ax.set_ylim(0, 700)
-    ax.set_xlim(2018.6, 2025.7)
+    ax.set_xlim(2018.85, 2025.95)
     ax.set_facecolor("none")
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)
@@ -118,13 +120,13 @@ def draw_hero(ax, mau):
     ax.tick_params(length=0, colors=SUBTLE, labelsize=10)
     ax.grid(axis="y", color=GRID, linewidth=1)
     ax.set_axisbelow(True)
-    ax.set_xticks(list(x))
+    ax.set_xticks(list(range(2019, 2026)))
     ax.set_yticks([0, 200, 400, 600])
     ax.set_ylabel("Monthly active users (millions)", color=SUBTLE, fontsize=10)
-    for yr, val, label, (dx, dy), ha in EVENTS:
-        focal = yr == 2025
+    for xpos, val, label, (dx, dy), ha in EVENTS:
+        focal = int(xpos) == 2025
         ann = ax.annotate(
-            label, xy=(yr, val), xytext=(dx, dy), textcoords="offset points",
+            label, xy=(xpos, val), xytext=(dx, dy), textcoords="offset points",
             fontsize=9.5, fontweight="bold", ha=ha, va="center",
             color="white" if focal else INK, zorder=6,
             bbox=dict(
@@ -142,7 +144,7 @@ def draw_hero(ax, mau):
             [pe.withSimplePatchShadow(offset=(1.5, -1.5), shadow_rgbFace="#B9B4AF", alpha=0.25)]
         )
         # Emphasise the anchor point with a ringed dot.
-        ax.plot([yr], [val], marker="o", markersize=8, markerfacecolor=PIN_RED,
+        ax.plot([xpos], [val], marker="o", markersize=8, markerfacecolor=PIN_RED,
                 markeredgecolor="white", markeredgewidth=1.6, zorder=7)
     ax.set_title("A decade of growth", loc="left", fontsize=12,
                  fontweight="bold", color=INK, pad=18)
@@ -224,7 +226,7 @@ def draw_hbar(ax, cats, vals, colors, fmt, title):
 
 
 def main() -> None:
-    mau = pd.read_csv(DATA / "pinterest_mau.csv").sort_values("year")
+    mau = pd.read_csv(DATA / "pinterest_mau_quarterly.csv").sort_values(["year", "quarter"])
     rev_ts = pd.read_csv(DATA / "pinterest_revenue.csv").sort_values("year")
     reg = pd.read_csv(DATA / "pinterest_regions_q4_2025.csv")
     reg_rev = reg.sort_values("revenue_musd")

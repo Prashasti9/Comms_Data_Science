@@ -145,7 +145,7 @@ def draw_hero(ax, mau):
         ax.plot([yr], [val], marker="o", markersize=8, markerfacecolor=PIN_RED,
                 markeredgecolor="white", markeredgewidth=1.6, zorder=7)
     ax.set_title("A decade of growth", loc="left", fontsize=12,
-                 fontweight="bold", color=INK, pad=10)
+                 fontweight="bold", color=INK, pad=18)
 
 
 def draw_share_gap(ax, reg):
@@ -179,7 +179,7 @@ def draw_share_gap(ax, reg):
     for side in ("top", "right", "left", "bottom"):
         ax.spines[side].set_visible(False)
     ax.set_title("Rest of World is 58% of users but 7% of revenue",
-                 loc="left", fontsize=12, fontweight="bold", color=INK, pad=8)
+                 loc="left", fontsize=12, fontweight="bold", color=INK, pad=18)
 
 
 def draw_hbar(ax, cats, vals, colors, fmt, title):
@@ -196,7 +196,7 @@ def draw_hbar(ax, cats, vals, colors, fmt, title):
         ax.spines[side].set_visible(False)
     ax.spines["left"].set_color(MUTED)
     ax.margins(x=0.18)
-    ax.set_title(title, loc="left", fontsize=12, fontweight="bold", color=INK, pad=8)
+    ax.set_title(title, loc="left", fontsize=12, fontweight="bold", color=INK, pad=18)
 
 
 def main() -> None:
@@ -213,31 +213,30 @@ def main() -> None:
 
     gs = GridSpec(
         7, 2, figure=fig,
-        height_ratios=[0.55, 1.05, 2.7, 1.45, 1.15, 1.15, 0.3],
-        hspace=1.0, wspace=0.30,
-        left=0.16, right=0.84, top=0.95, bottom=0.035,
+        height_ratios=[0.55, 1.25, 2.7, 1.45, 1.15, 1.15, 0.3],
+        hspace=1.05, wspace=0.30,
+        left=0.19, right=0.81, top=0.95, bottom=0.035,
     )
 
     # --- Header: serif editorial headline ---
-    fig.text(0.09, 0.947, "Pinterest's split screen", fontsize=27,
+    fig.text(0.11, 0.947, "Pinterest's split screen", fontsize=27,
              fontweight="bold", family="serif", color=INK, va="center")
 
     # --- Deck + big numbers ---
     ax_deck = fig.add_subplot(gs[1, 0]); ax_deck.axis("off")
     ax_deck.text(
         0, 1.0,
-        "By the end of 2025, Pinterest had grown to a\n"
-        "record 619 million monthly users and $4.2\n"
-        "billion in annual revenue. But where those\n"
-        "users live looks nothing like where the money\n"
-        "comes from — the gap that defines its next decade.",
-        fontsize=10.5, color=INK, va="top", linespacing=1.55,
+        "By the end of 2025, Pinterest hit a\n"
+        "record 619M monthly users and\n"
+        "$4.2B in revenue — but where users\n"
+        "live is not where the money is made.",
+        fontsize=10.5, color=INK, va="top", linespacing=1.6,
     )
     ax_big = fig.add_subplot(gs[1, 1]); ax_big.axis("off")
-    ax_big.text(0.05, 0.90, "619M", fontsize=24, fontweight="bold", color=PIN_RED, va="center")
-    ax_big.text(0.05, 0.64, "monthly active users (+12% YoY)", fontsize=9.5, color=SUBTLE, va="center")
-    ax_big.text(0.05, 0.36, "$4.2B", fontsize=24, fontweight="bold", color=INK, va="center")
-    ax_big.text(0.05, 0.10, "FY2025 revenue (+16% YoY)", fontsize=9.5, color=SUBTLE, va="center")
+    ax_big.text(0.05, 0.86, "619M", fontsize=24, fontweight="bold", color=PIN_RED, va="center")
+    ax_big.text(0.05, 0.62, "monthly active users (+12% YoY)", fontsize=9.5, color=SUBTLE, va="center")
+    ax_big.text(0.05, 0.32, "$4.2B", fontsize=24, fontweight="bold", color=INK, va="center")
+    ax_big.text(0.05, 0.08, "FY2025 revenue (+16% YoY)", fontsize=9.5, color=SUBTLE, va="center")
 
     # --- Charts (each a full-width panel) ---
     ax_hero = fig.add_subplot(gs[2, :]); draw_hero(ax_hero, mau)
@@ -259,11 +258,11 @@ def main() -> None:
 
     # --- Pin-board cards behind each panel (drawn after layout is known) ---
     fig.canvas.draw()
-    add_card(ax_bg, [ax_deck, ax_big], pad_y=0.022, extra_top=0.010, pad_bottom=0.05)
-    add_card(ax_bg, [ax_hero], extra_top=0.03)
-    add_card(ax_bg, [ax_split], extra_top=0.03)
-    add_card(ax_bg, [ax_rev], extra_top=0.03)
-    add_card(ax_bg, [ax_arpu], extra_top=0.03)
+    add_card(ax_bg, [ax_deck, ax_big], pad_y=0.02, extra_top=0.015, pad_bottom=0.04)
+    add_card(ax_bg, [ax_hero], extra_top=0.045)
+    add_card(ax_bg, [ax_split], extra_top=0.045)
+    add_card(ax_bg, [ax_rev], extra_top=0.045)
+    add_card(ax_bg, [ax_arpu], extra_top=0.045)
 
     fig.savefig(OUT / "pinviz_poster.pdf", bbox_inches="tight", facecolor=fig.get_facecolor())
     fig.savefig(OUT / "pinviz_poster.png", dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())

@@ -84,8 +84,3 @@ python -m pytest
 ## License
 
 [MIT](LICENSE)
-
----
-
-*This repository also contains an earlier utility module, `simple_viz`
-(thin matplotlib wrappers), kept for reference under `src/simple_viz/`.*

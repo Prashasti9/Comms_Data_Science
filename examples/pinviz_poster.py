@@ -36,8 +36,8 @@ DATA = ROOT / "data"
 OUT = ROOT / "examples"
 
 # Palette. A warm off-white page makes the white cards read as a pin-board.
-PAGE = "#FFFFFF"
-CARD = "#F4F4F6"
+PAGE = "#F3F1EF"
+CARD = "#FFFFFF"
 PIN_RED_FILL = "#F7C6CE"
 GREYS = ["#8A8A8A", "#BDBDBD"]
 
@@ -100,7 +100,7 @@ def add_card(ax_bg, axes, pad_y=0.030, extra_top=0.0, x0=0.045, x1=0.955, pad_bo
         boxstyle="round,pad=0,rounding_size=0.012",
         transform=ax_bg.transAxes, facecolor=CARD, edgecolor="none",
     )
-    card.set_path_effects([pe.withSimplePatchShadow(offset=(2, -3), shadow_rgbFace="#C7C7CC", alpha=0.35)])
+    card.set_path_effects([pe.withSimplePatchShadow(offset=(2, -3), shadow_rgbFace="#B9B4AF", alpha=0.35)])
     ax_bg.add_patch(card)
 
 
@@ -141,7 +141,7 @@ def draw_hero(ax, mau):
         )
         # Soft shadow on the chip so it lifts off the card, like a UI pill.
         ann.get_bbox_patch().set_path_effects(
-            [pe.withSimplePatchShadow(offset=(1.5, -1.5), shadow_rgbFace="#C7C7CC", alpha=0.25)]
+            [pe.withSimplePatchShadow(offset=(1.5, -1.5), shadow_rgbFace="#B9B4AF", alpha=0.25)]
         )
         # Emphasise the anchor point with a ringed dot.
         ax.plot([xpos], [val], marker="o", markersize=8, markerfacecolor=PIN_RED,
@@ -162,7 +162,7 @@ def add_callout(fig, ax_bg, ax, text, x0=0.045, x1=0.955):
         transform=ax_bg.transAxes, facecolor=PIN_RED, edgecolor="none",
     )
     band.set_path_effects(
-        [pe.withSimplePatchShadow(offset=(2, -3), shadow_rgbFace="#C7C7CC", alpha=0.35)]
+        [pe.withSimplePatchShadow(offset=(2, -3), shadow_rgbFace="#B9B4AF", alpha=0.35)]
     )
     ax_bg.add_patch(band)
     fig.text((x0 + x1) / 2, (y0 + y1) / 2, text, ha="center", va="center",

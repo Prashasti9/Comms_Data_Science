@@ -148,6 +148,30 @@ def draw_hero(ax, mau):
                  fontweight="bold", color=INK, pad=18)
 
 
+def draw_revenue(ax, rev):
+    """Annual revenue as vertical bars — the 'dollars' half of the growth
+    story, to sit alongside the users line."""
+    x = list(rev["year"])
+    y = list(rev["revenue_musd"])
+    colors = [PIN_RED if yr == 2025 else MUTED for yr in x]
+    bars = ax.bar(x, y, width=0.62, color=colors, edgecolor="#333333", linewidth=1.0)
+    ax.set_ylim(0, max(y) * 1.22)
+    ax.set_facecolor("none")
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    for side in ("left", "bottom"):
+        ax.spines[side].set_color(MUTED)
+    ax.set_yticks([])
+    ax.set_xticks(x)
+    ax.tick_params(length=0, colors=SUBTLE, labelsize=10)
+    for bar, v in zip(bars, y):
+        ax.text(bar.get_x() + bar.get_width() / 2, v + max(y) * 0.03,
+                f"${v/1000:.1f}B", ha="center", va="bottom",
+                fontsize=8.5, fontweight="bold", color=INK)
+    ax.set_title("Revenue grew nearly 4x, to $4.2B", loc="left",
+                 fontsize=12, fontweight="bold", color=INK, pad=18)
+
+
 def draw_share_gap(ax, reg):
     cats = list(reg["region"])
     users, rev = reg["maus_millions"], reg["revenue_musd"]
@@ -201,19 +225,20 @@ def draw_hbar(ax, cats, vals, colors, fmt, title):
 
 def main() -> None:
     mau = pd.read_csv(DATA / "pinterest_mau.csv").sort_values("year")
+    rev_ts = pd.read_csv(DATA / "pinterest_revenue.csv").sort_values("year")
     reg = pd.read_csv(DATA / "pinterest_regions_q4_2025.csv")
     reg_rev = reg.sort_values("revenue_musd")
     reg_arpu = reg.assign(arpu=reg["revenue_musd"] / reg["maus_millions"]).sort_values("arpu")
 
-    fig = plt.figure(figsize=(8.6, 15.2), facecolor=PAGE)
+    fig = plt.figure(figsize=(8.6, 17.2), facecolor=PAGE)
 
     # Full-canvas background layer that holds the pin-board cards.
     ax_bg = fig.add_axes([0, 0, 1, 1]); ax_bg.set_zorder(-10)
     ax_bg.axis("off"); ax_bg.set_xlim(0, 1); ax_bg.set_ylim(0, 1)
 
     gs = GridSpec(
-        7, 2, figure=fig,
-        height_ratios=[0.55, 1.25, 2.7, 1.45, 1.15, 1.15, 0.3],
+        8, 2, figure=fig,
+        height_ratios=[0.55, 1.25, 2.7, 1.7, 1.45, 1.15, 1.15, 0.3],
         hspace=1.05, wspace=0.30,
         left=0.19, right=0.85, top=0.95, bottom=0.035,
     )
@@ -240,17 +265,18 @@ def main() -> None:
 
     # --- Charts (each a full-width panel) ---
     ax_hero = fig.add_subplot(gs[2, :]); draw_hero(ax_hero, mau)
-    ax_split = fig.add_subplot(gs[3, :]); draw_share_gap(ax_split, reg)
-    ax_rev = fig.add_subplot(gs[4, :])
+    ax_revts = fig.add_subplot(gs[3, :]); draw_revenue(ax_revts, rev_ts)
+    ax_split = fig.add_subplot(gs[4, :]); draw_share_gap(ax_split, reg)
+    ax_rev = fig.add_subplot(gs[5, :])
     draw_hbar(ax_rev, list(reg_rev["region"]), list(reg_rev["revenue_musd"]),
               [PIN_RED if c == "US & Canada" else MUTED for c in reg_rev["region"]],
               "${:,.0f}M", "Q4 revenue by region")
-    ax_arpu = fig.add_subplot(gs[5, :])
+    ax_arpu = fig.add_subplot(gs[6, :])
     draw_hbar(ax_arpu, list(reg_arpu["region"]), list(reg_arpu["arpu"]),
               [PIN_RED if c == "US & Canada" else MUTED for c in reg_arpu["region"]],
               "${:,.2f}", "Implied revenue per user")
     # --- Footer ---
-    ax_foot = fig.add_subplot(gs[6, :]); ax_foot.axis("off")
+    ax_foot = fig.add_subplot(gs[7, :]); ax_foot.axis("off")
     ax_foot.text(0, 0.5,
                  "Source: Pinterest Q4 & Full-Year 2025 earnings report (Feb 2026).  Built with pinviz.",
                  fontsize=9, color=SUBTLE, va="center")
@@ -259,6 +285,7 @@ def main() -> None:
     fig.canvas.draw()
     add_card(ax_bg, [ax_deck, ax_big], pad_y=0.02, extra_top=0.015, pad_bottom=0.04)
     add_card(ax_bg, [ax_hero], extra_top=0.045)
+    add_card(ax_bg, [ax_revts], extra_top=0.045)
     add_card(ax_bg, [ax_split], extra_top=0.045)
     add_card(ax_bg, [ax_rev], extra_top=0.045)
     add_card(ax_bg, [ax_arpu], extra_top=0.045)

@@ -162,8 +162,8 @@ def draw_share_gap(ax, reg):
     ax.set_facecolor("none")
     left_u = left_r = 0
     for i, c in enumerate(cats):
-        ax.barh("Users", u_pct[i], left=left_u, color=color_for[c])
-        ax.barh("Revenue", r_pct[i], left=left_r, color=color_for[c])
+        ax.barh("Users", u_pct[i], left=left_u, height=0.58, color=color_for[c])
+        ax.barh("Revenue", r_pct[i], left=left_r, height=0.58, color=color_for[c])
         if u_pct[i] > 6:
             ax.text(left_u + u_pct[i] / 2, 0, f"{u_pct[i]:.0f}%", ha="center", va="center",
                     fontsize=9, color="white" if c == "Rest of World" else INK, fontweight="bold")
@@ -182,7 +182,7 @@ def draw_share_gap(ax, reg):
 
 def draw_hbar(ax, cats, vals, colors, fmt, title):
     ax.set_facecolor("none")
-    bars = ax.barh(cats, vals, color=colors)
+    bars = ax.barh(cats, vals, height=0.6, color=colors)
     ax.set_xticks([])
     pad = max(vals) * 0.02
     for bar, v in zip(bars, vals):
@@ -215,9 +215,8 @@ def main() -> None:
         left=0.16, right=0.90, top=0.95, bottom=0.035,
     )
 
-    # --- Header: logo + serif wordmark headline ---
-    add_logo(fig, left=0.09, bottom=0.928, size=0.042)
-    fig.text(0.165, 0.947, "Pinterest's split screen", fontsize=27,
+    # --- Header: serif editorial headline ---
+    fig.text(0.09, 0.947, "Pinterest's split screen", fontsize=27,
              fontweight="bold", family="serif", color=INK, va="center")
 
     # --- Deck + big numbers ---

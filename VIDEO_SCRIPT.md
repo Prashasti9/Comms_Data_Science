@@ -7,12 +7,17 @@ screen · **[SAY]** = say it. Terminal open (venv active, inside
 
 ---
 
-**0:00 — Hook**
-**[DO]** `simple_viz_04_share_gap.png` full-screen.
+**0:00 — Hook (motion first)**
+**[DO]** Play `examples/simple_viz_story.gif` in a browser (`open -a "Google Chrome" examples/simple_viz_story.gif`) — let it animate.
 **[SAY]** "Pinterest has a global audience — but its revenue is not global.
-That's the story my Python library, `simple_viz`, makes clear."
+That's the story my Python library, `simple_viz`, tells."
 
-**0:12 — This is a real package (structure)**
+**0:08 — The whole story on one page**
+**[DO]** `open examples/simple_viz_poster.png`.
+**[SAY]** "Here's all of it on one page — the growth, the revenue, and the gap
+between them. Now let me show you the library behind it."
+
+**0:18 — This is a real package (structure)**
 **[DO]** Show the file tree in your editor sidebar (or run `ls src/simple_viz data tests examples`).
 **[SAY]** "It's a proper package. `src/simple_viz` holds the code —
 `core.py` has the five chart functions, `theme.py` has the shared colours and
@@ -63,7 +68,7 @@ don't have to guess."
 so colour points to the mismatch, and the values are labelled directly."
 
 **1:52 — What it means**
-**[DO]** `open examples/simple_viz_poster.png`.
+**[DO]** `open examples/simple_viz_05_revenue_per_user.png` (the ≈35× callout).
 **[SAY]** "Together: revenue nearly quadrupled while users didn't double — so
 Pinterest earns far more per user, but unevenly. A US user is worth about 35
 times a Rest-of-World user. The opportunity is international monetisation,

@@ -1,10 +1,10 @@
-"""Generate the full pinviz chart gallery from the verified Pinterest data.
+"""Generate the full simple_viz chart gallery from the verified Pinterest data.
 
-Writes one PNG per chart into ``examples/`` and a combined ``pinviz_gallery.pdf``.
+Writes one PNG per chart into ``examples/`` and a combined ``simple_viz_gallery.pdf``.
 
 Usage
 -----
-    python examples/pinviz_gallery.py
+    python examples/simple_viz_gallery.py
 """
 
 from pathlib import Path
@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
-import pinviz
+import simple_viz
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -31,13 +31,13 @@ def main() -> None:
     figs = {}
 
     # 1. Big number — the headline figure.
-    figs["01_big_number"] = pinviz.big_number(
+    figs["01_big_number"] = simple_viz.big_number(
         619, "M", "monthly active users in 2025",
         footnote="a record high, up 12% year over year",
     )
 
     # 2. Growth line — change over time, with the 2021 dip explained.
-    figs["02_growth_line"] = pinviz.growth_line(
+    figs["02_growth_line"] = simple_viz.growth_line(
         mau, "year", "maus_millions",
         title="Pinterest's audience hit a record 619M in 2025",
         subtitle="Global monthly active users, Q4 of each year (millions)",
@@ -45,7 +45,7 @@ def main() -> None:
     )
 
     # 3. Revenue bar — who brings in the money (spotlight US & Canada).
-    figs["03_revenue_bar"] = pinviz.revenue_bar(
+    figs["03_revenue_bar"] = simple_viz.revenue_bar(
         reg, "region", "revenue_musd",
         title="US & Canada earns $979M — 74% of Q4 revenue",
         subtitle="Q4 2025 revenue by region",
@@ -53,7 +53,7 @@ def main() -> None:
     )
 
     # 4. Share gap — the signature chart: users vs revenue mismatch.
-    figs["04_share_gap"] = pinviz.share_gap(
+    figs["04_share_gap"] = simple_viz.share_gap(
         reg, "region", "maus_millions", "revenue_musd",
         title="Rest of World is 58% of users but just 7% of revenue",
         subtitle="Share of Q4 2025 monthly active users vs. share of revenue",
@@ -61,22 +61,29 @@ def main() -> None:
         highlight="Rest of World",
     )
 
-    # 5. ARPU bar — implied revenue per user, spotlight the gap.
-    figs["05_arpu_bar"] = pinviz.arpu_bar(
+    # 5. Revenue per user — implied revenue per user, spotlight the gap.
+    figs["05_revenue_per_user"] = simple_viz.revenue_per_user(
         reg, "region", "revenue_musd", "maus_millions",
         title="Each US & Canada user is worth ~$9; Rest of World ~$0.27",
         subtitle="Implied Q4 2025 revenue per monthly active user",
         spotlight="US & Canada",
     )
+    # A callout in the empty space so the key gap reads at a glance.
+    figs["05_revenue_per_user"].axes[0].text(
+        0.97, 0.42, "≈ 35x gap\nUS & Canada vs.\nRest of World",
+        transform=figs["05_revenue_per_user"].axes[0].transAxes,
+        ha="right", va="center", fontsize=10.5, fontweight="bold",
+        color="#E60023", linespacing=1.4,
+    )
 
     # Save individual PNGs.
     for name, fig in figs.items():
-        path = OUT / f"pinviz_{name}.png"
+        path = OUT / f"simple_viz_{name}.png"
         fig.savefig(path, dpi=150, bbox_inches="tight")
         print(f"wrote {path.relative_to(ROOT)}")
 
     # Save a combined multi-page PDF.
-    pdf_path = OUT / "pinviz_gallery.pdf"
+    pdf_path = OUT / "simple_viz_gallery.pdf"
     with PdfPages(pdf_path) as pdf:
         for fig in figs.values():
             pdf.savefig(fig, bbox_inches="tight")

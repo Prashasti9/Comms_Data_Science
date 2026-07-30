@@ -1,13 +1,12 @@
-# pinviz
+# simple_viz
 
 **Opinionated, communication-first charts that tell one data story.**
 
-`pinviz` is a small Python visualization library built for a communication
-course. Every function makes deliberate design decisions drawn from the
-[Evergreen Data Visualization Checklist](https://stephanieevergreen.com/data-visualization-checklist/)
-and maps to a family in the *Quantitative Chart Chooser*. The running example
-is **Pinterest's 2025 results** — a company with a huge global audience but
-very unevenly distributed revenue.
+`simple_viz` is a small Python visualization library built for a communication
+course. Every function is the right chart for one specific question and makes
+deliberate design decisions, so the whole set reads as one system. The running
+example is **Pinterest's 2025 results** — a company with a huge global audience
+but very unevenly distributed revenue.
 
 Each function returns a matplotlib `Figure`, so you can `savefig` it in any
 format (PNG, PDF, SVG).
@@ -34,16 +33,16 @@ The design is the point, not an afterthought:
 python -m pip install -e .
 ```
 
-This installs `pinviz` and its dependencies (`matplotlib`, `pandas`).
+This installs `simple_viz` and its dependencies (`matplotlib`, `pandas`).
 
 ## Use
 
 ```python
 import pandas as pd
-import pinviz
+import simple_viz
 
 mau = pd.read_csv("data/pinterest_mau.csv")
-fig = pinviz.growth_line(
+fig = simple_viz.growth_line(
     mau, "year", "maus_millions",
     title="Pinterest's audience hit a record 619M in 2025",
     subtitle="Global monthly active users, Q4 of each year (millions)",
@@ -55,18 +54,18 @@ fig.savefig("mau.png", dpi=150, bbox_inches="tight")
 Generate the whole gallery (5 charts + a combined PDF) at once:
 
 ```bash
-python examples/pinviz_gallery.py
+python examples/simple_viz_gallery.py
 ```
 
 ## The library
 
-| Function | Chart Chooser family | Answers |
+| Function | Chart type | Answers |
 | --- | --- | --- |
 | `big_number(value, unit, label, ...)` | Single important number | How big is the headline? |
 | `growth_line(df, x, y, ...)` | Change over time | Which way is the trend going? |
 | `revenue_bar(df, category, value, ...)` | Comparison | Who contributes the most? |
 | `share_gap(df, category, part_a, part_b, ...)` | Parts of a whole | Where do users and revenue diverge? |
-| `arpu_bar(df, category, revenue, users, ...)` | Comparison / ratio | How well is each region monetised? |
+| `revenue_per_user(df, category, revenue, users, ...)` | Comparison / ratio | How well is each region monetised? |
 
 ## Data
 

@@ -5,7 +5,7 @@ time. Play it as a short flourish alongside the static poster.
 
 Usage
 -----
-    python examples/pinviz_story_animation.py   ->  examples/pinviz_story.gif
+    python examples/simple_viz_story_animation.py   ->  examples/simple_viz_story.gif
 """
 
 from pathlib import Path
@@ -20,7 +20,7 @@ from matplotlib.animation import FuncAnimation, PillowWriter
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import FancyBboxPatch
 
-from pinviz.theme import GRID, INK, MUTED, PIN_RED, SUBTLE
+from simple_viz.theme import GRID, INK, MUTED, PIN_RED, SUBTLE
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -181,7 +181,7 @@ def main() -> None:
         draw_callout(ax_c, _seg(frame, S, C))
 
     anim = FuncAnimation(fig, update, frames=END, interval=90, blit=False)
-    out = OUT / "pinviz_story.gif"
+    out = OUT / "simple_viz_story.gif"
     anim.save(out, writer=PillowWriter(fps=11))
     plt.close(fig)
     print(f"wrote {out.relative_to(ROOT)}")

@@ -1,23 +1,23 @@
-"""Chart functions for :mod:`pinviz`.
+"""Chart functions for :mod:`simple_viz`.
 
-Each function maps to one family in the *Quantitative Chart Chooser* and
-returns a :class:`matplotlib.figure.Figure`. They all share the theme in
-:mod:`pinviz.theme`, so the library reads as one designed system.
+Each function is the right chart for one kind of question and returns a
+:class:`matplotlib.figure.Figure`. They all share the theme in
+:mod:`simple_viz.theme`, so the library reads as one designed system.
 
-    Function       Chart Chooser family     "So what?" it answers
-    -----------    ----------------------   ---------------------------
-    big_number     Single important number  How big is the headline?
-    growth_line    Change over time         Which way is the trend going?
-    revenue_bar    Comparison               Who contributes the most?
-    share_gap      Parts of a whole         Users vs. revenue mismatch
-    arpu_bar       Comparison / ratio       How well is each region paid?
+    Function          Chart type               "So what?" it answers
+    ---------------   ----------------------   ---------------------------
+    big_number        single important number  How big is the headline?
+    growth_line       change over time         Which way is the trend going?
+    revenue_bar       comparison               Who contributes the most?
+    share_gap         parts of a whole         Users vs. revenue mismatch
+    revenue_per_user  ratio comparison         How well is each region paid?
 """
 
 from __future__ import annotations
 
 import matplotlib.pyplot as plt
 
-from pinviz.theme import (
+from simple_viz.theme import (
     INK,
     MUTED,
     PIN_RED,
@@ -27,7 +27,7 @@ from pinviz.theme import (
     titles,
 )
 
-__all__ = ["big_number", "growth_line", "revenue_bar", "share_gap", "arpu_bar"]
+__all__ = ["big_number", "growth_line", "revenue_bar", "share_gap", "revenue_per_user"]
 
 
 def big_number(value, unit, label, footnote="", color=PIN_RED):
@@ -76,7 +76,7 @@ def growth_line(df, x, y, title, subtitle="", annotate=None, value_fmt="{:.0f}M"
 
 
 def _spotlight_barh(cats, vals, spotlight, value_fmt, title, subtitle, figsize):
-    """Shared horizontal-bar drawing for revenue_bar and arpu_bar. Aesthetic:
+    """Shared horizontal-bar drawing for revenue_bar and revenue_per_user. Aesthetic:
     bars sorted by size, one spotlighted bar in the highlight colour while the
     rest are grey, and end-of-bar value labels so no x-axis is needed."""
     colors = [PIN_RED if c == spotlight else MUTED for c in cats]
@@ -106,13 +106,13 @@ def revenue_bar(df, category, value, title, subtitle="", spotlight=None,
                            value_fmt, title, subtitle, figsize=(8, 4.2))
 
 
-def arpu_bar(df, category, revenue, users, title, subtitle="", spotlight=None):
+def revenue_per_user(df, category, revenue, users, title, subtitle="", spotlight=None):
     """Comparison bars of an implied ratio: revenue per user by category.
     The ratio is computed here (revenue / users), never hand-entered."""
     data = df.copy()
-    data["_arpu"] = data[revenue] / data[users]
-    data = data.sort_values("_arpu", ascending=True)
-    return _spotlight_barh(list(data[category]), list(data["_arpu"]), spotlight,
+    data["_per_user"] = data[revenue] / data[users]
+    data = data.sort_values("_per_user", ascending=True)
+    return _spotlight_barh(list(data[category]), list(data["_per_user"]), spotlight,
                            "${:,.2f}", title, subtitle, figsize=(8, 4.2))
 
 

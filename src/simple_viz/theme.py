@@ -1,5 +1,5 @@
-"""Shared visual theme for pinviz: one highlight colour, no chartjunk, and
-takeaway titles — the Evergreen choices every chart in :mod:`pinviz.core`
+"""Shared visual theme for simple_viz: one highlight colour, no chartjunk, and
+takeaway titles — the design choices every chart in :mod:`simple_viz.core`
 reuses so the library reads as one designed system."""
 
 import matplotlib.pyplot as plt

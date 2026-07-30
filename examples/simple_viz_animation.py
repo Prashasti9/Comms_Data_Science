@@ -4,7 +4,7 @@ data is identical to the static charts, just revealed progressively.
 
 Usage
 -----
-    python examples/pinviz_animation.py   ->  examples/pinviz_growth.gif
+    python examples/simple_viz_animation.py   ->  examples/simple_viz_growth.gif
 """
 
 from pathlib import Path
@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.animation import FuncAnimation, PillowWriter
 
-from pinviz.theme import GRID, INK, MUTED, PIN_RED, SUBTLE
+from simple_viz.theme import GRID, INK, MUTED, PIN_RED, SUBTLE
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -70,7 +70,7 @@ def main() -> None:
         return line, dot, label
 
     anim = FuncAnimation(fig, update, frames=reveal + hold, interval=90, blit=False)
-    out = OUT / "pinviz_growth.gif"
+    out = OUT / "simple_viz_growth.gif"
     anim.save(out, writer=PillowWriter(fps=12))
     plt.close(fig)
     print(f"wrote {out.relative_to(ROOT)}")

@@ -11,7 +11,7 @@ success. The visualization reframes them into the real strategic story:
 
 ## What each chart contributes to the argument
 
-| Chart | Chart Chooser family | What it establishes |
+| Chart | Chart type | What it establishes |
 | --- | --- | --- |
 | Users over time | Change over time | Scale & momentum — 619M MAU, +12% YoY, durable growth |
 | Revenue over time | Change over time | Revenue grew ~3.7x since 2019 vs users ~1.85x → monetization is improving (global ARPU $3.81 → $7.21) |

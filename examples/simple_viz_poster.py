@@ -1,4 +1,4 @@
-"""Compose the pinviz charts into a single one-page infographic poster.
+"""Compose the simple_viz charts into a single one-page infographic poster.
 
 Inspired by the editorial technique of Simon Scarr's "Iraq's Bloody Toll":
 a headline, an intro deck, one dominant annotated hero chart, and a row of
@@ -7,11 +7,11 @@ supporting charts, all in a single accent colour on one page.
 Pinterest cues: the brand logo mark, and a light background with rounded
 white "cards" behind each chart to echo Pinterest's masonry pin-board UI.
 
-Writes ``examples/pinviz_poster.pdf`` and ``examples/pinviz_poster.png``.
+Writes ``examples/simple_viz_poster.pdf`` and ``examples/simple_viz_poster.png``.
 
 Usage
 -----
-    python examples/pinviz_poster.py
+    python examples/simple_viz_poster.py
 """
 
 from pathlib import Path
@@ -26,7 +26,7 @@ import pandas as pd
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import FancyBboxPatch
 
-from pinviz.theme import GRID, INK, MUTED, PIN_RED, SUBTLE
+from simple_viz.theme import GRID, INK, MUTED, PIN_RED, SUBTLE
 
 plt.rcParams["text.parse_math"] = False
 
@@ -217,7 +217,7 @@ def main() -> None:
     rev_ts = pd.read_csv(DATA / "pinterest_revenue.csv").sort_values("year")
     reg = pd.read_csv(DATA / "pinterest_regions_q4_2025.csv")
     reg_rev = reg.sort_values("revenue_musd")
-    reg_arpu = reg.assign(arpu=reg["revenue_musd"] / reg["maus_millions"]).sort_values("arpu")
+    reg_per_user = reg.assign(arpu=reg["revenue_musd"] / reg["maus_millions"]).sort_values("arpu")
 
     fig = plt.figure(figsize=(8.6, 18.0), facecolor=PAGE)
 
@@ -262,16 +262,16 @@ def main() -> None:
     draw_hbar(ax_rev, list(reg_rev["region"]), list(reg_rev["revenue_musd"]),
               [PIN_RED if c == "US & Canada" else MUTED for c in reg_rev["region"]],
               "${:,.0f}M", "Q4 revenue by region")
-    ax_arpu = fig.add_subplot(gs[6, :])
-    draw_hbar(ax_arpu, list(reg_arpu["region"]), list(reg_arpu["arpu"]),
-              [PIN_RED if c == "US & Canada" else MUTED for c in reg_arpu["region"]],
+    ax_per_user = fig.add_subplot(gs[6, :])
+    draw_hbar(ax_per_user, list(reg_per_user["region"]), list(reg_per_user["arpu"]),
+              [PIN_RED if c == "US & Canada" else MUTED for c in reg_per_user["region"]],
               "${:,.2f}", "Implied revenue per user")
     ax_callout = fig.add_subplot(gs[7, :]); ax_callout.axis("off")
 
     # --- Footer ---
     ax_foot = fig.add_subplot(gs[8, :]); ax_foot.axis("off")
     ax_foot.text(0, 0.5,
-                 "Source: Pinterest Q4 & Full-Year 2025 earnings report (Feb 2026).  Built with pinviz.",
+                 "Source: Pinterest Q4 & Full-Year 2025 earnings report (Feb 2026).  Built with simple_viz.",
                  fontsize=9, color=SUBTLE, va="center")
 
     # --- Pin-board cards behind each panel (drawn after layout is known) ---
@@ -281,15 +281,15 @@ def main() -> None:
     add_card(ax_bg, [ax_revts], extra_top=0.045)
     add_card(ax_bg, [ax_split], extra_top=0.045)
     add_card(ax_bg, [ax_rev], extra_top=0.045)
-    add_card(ax_bg, [ax_arpu], extra_top=0.045)
+    add_card(ax_bg, [ax_per_user], extra_top=0.045)
     add_callout(fig, ax_bg, ax_callout,
                 "A US & Canada user is worth about 35x a Rest-of-World user.")
 
-    fig.savefig(OUT / "pinviz_poster.pdf", bbox_inches="tight", facecolor=fig.get_facecolor())
-    fig.savefig(OUT / "pinviz_poster.png", dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())
+    fig.savefig(OUT / "simple_viz_poster.pdf", bbox_inches="tight", facecolor=fig.get_facecolor())
+    fig.savefig(OUT / "simple_viz_poster.png", dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())
     plt.close(fig)
-    print("wrote examples/pinviz_poster.pdf")
-    print("wrote examples/pinviz_poster.png")
+    print("wrote examples/simple_viz_poster.pdf")
+    print("wrote examples/simple_viz_poster.png")
 
 
 if __name__ == "__main__":

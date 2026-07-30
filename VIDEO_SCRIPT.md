@@ -1,82 +1,108 @@
-# simple_viz — 2-minute demo script
+# simple_viz — demo script (~2:30–3:00)
 
-Punchy on purpose: short lines, show more than you say. **[DO]** = action on
-screen · **[SAY]** = say it out loud. Terminal open (venv active, inside
-`Comms_Data_Science`), plus your editor/GitHub for the README.
+Video-only submission, so **show the real work**, not just the charts. Keep it
+moving — show while you talk, don't read code line by line. **[DO]** = on
+screen · **[SAY]** = say it. Terminal open (venv active, inside
+`Comms_Data_Science`) + your editor with the project open.
 
 ---
 
-**0:00 — Intro**
-**[SAY]** "Hi, I'm Prashasti. This is `simple_viz` — a small Python library
-that turns Pinterest's 2025 numbers into charts that make a point."
+**0:00 — Hook**
+**[DO]** `simple_viz_04_share_gap.png` full-screen.
+**[SAY]** "Pinterest has a global audience — but its revenue is not global.
+That's the story my Python library, `simple_viz`, makes clear."
 
-**0:10 — Install + import**
+**0:12 — This is a real package (structure)**
+**[DO]** Show the file tree in your editor sidebar (or run `ls src/simple_viz data tests examples`).
+**[SAY]** "It's a proper package. `src/simple_viz` holds the code —
+`core.py` has the five chart functions, `theme.py` has the shared colours and
+styling. There's a `data` folder with the real numbers as CSVs, a `tests`
+folder, a README, and packaging in `pyproject.toml`."
+
+**0:32 — The code + the data**
+**[DO]** Open `src/simple_viz/core.py`, scroll once; then open one CSV, e.g. `data/pinterest_revenue.csv`.
+**[SAY]** "Each function is small — takes a pandas DataFrame, returns a
+matplotlib figure, one job each. And the data is real: I took Pinterest's 2025
+users and revenue from their earnings release and SEC filing and stored them
+in these CSVs — no scraping, no API."
+
+**0:50 — Install + import**
 **[DO]**
 ```bash
 python -m pip install -e .
 python -c "import simple_viz; print(simple_viz.__all__)"
 ```
-**[SAY]** "Install it, import it — five functions."
+**[SAY]** "I install it in editable mode from the project root, import it, and
+there are the five functions — built with pandas and matplotlib."
 
-**0:25 — Where the data came from**
-**[SAY]** "The numbers are real. I took Pinterest's 2025 users and revenue
-from their earnings release and their SEC filing, put them in small CSV files,
-and the library reads them with pandas — no scraping, no API."
+**1:02 — Tests pass**
+**[DO]**
+```bash
+python -m pytest -q
+```
+**[SAY]** "It's tested too — nine tests confirm every function runs on the real
+data and returns a figure, plus the two calculations the library does itself.
+All passing."
 
-**0:40 — README**
-**[DO]** Scroll `README.md`.
+**1:14 — README**
+**[DO]** Scroll `README.md` to the function table.
 **[SAY]** "The README has install, usage, and each function next to the
 question it answers."
 
-**0:52 — Favorite chart #1: growth_line**
-**[DO]** `open examples/simple_viz_02_growth_line.png` (⌘9 to fit).
-**[SAY]** "First favorite — the growth line. Users hit a record 619 million.
-It starts at zero so the rise is honest, and I annotated the 2021 dip so the
-chart explains itself."
+**1:12 — Favorite chart #1: growth_line**
+**[DO]** `open examples/simple_viz_02_growth_line.png`.
+**[SAY]** "First favorite — the growth line, the right chart for change over
+time. Users reach a record 619 million. It starts at zero so the growth is
+honest, the title states the takeaway, and I annotated the 2021 dip so viewers
+don't have to guess."
 
-**1:12 — Favorite chart #2: share_gap**
+**1:32 — Favorite chart #2: share_gap**
 **[DO]** `open examples/simple_viz_04_share_gap.png`.
-**[SAY]** "Second favorite — the split. Rest of World is 58% of the users but
-7% of the revenue. One red bar carries the eye; the gap is the whole story."
+**[SAY]** "Second favorite — the split. Rest of World is 58% of users but only
+7% of revenue. One category is in Pinterest red and everything else is grey,
+so colour points to the mismatch, and the values are labelled directly."
 
-**1:30 — The story: how revenue grew**
+**1:52 — What it means**
 **[DO]** `open examples/simple_viz_poster.png`.
-**[SAY]** "The big picture: revenue nearly quadrupled to 4.2 billion while
-users didn't even double — so Pinterest is earning far more *per user*. But
-it's lopsided: a US user is worth about 35 times a Rest-of-World user. My
-take — the growth lever now is monetizing that huge international audience,
-especially Europe, not squeezing the saturated US."
+**[SAY]** "Together: revenue nearly quadrupled while users didn't double — so
+Pinterest earns far more per user, but unevenly. A US user is worth about 35
+times a Rest-of-World user. The opportunity is international monetisation,
+especially Europe."
 
-**1:52 — Two problems I hit**
-**[SAY]** "Two problems. One: `import` failed until I installed from the
-project root with `pip install -e .` — I hit that again today. Two: dollar
-signs rendered as math until I turned off matplotlib's math parsing."
+**2:08 — Two problems I solved**
+**[SAY]** "Two problems. One: Python couldn't find the package because of the
+`src` layout — installing with `pip install -e .` from the project root fixed
+it. Two: matplotlib read dollar signs as math, so I disabled math parsing once
+in the shared theme."
 
-**2:08 — Close**
-**[SAY]** "That's `simple_viz` — built on matplotlib and pandas, one clear
-story: Pinterest's audience is global, its revenue isn't. Thanks."
+**2:24 — Close**
+**[DO]** (optional) `git log --oneline -8` to show the build history.
+**[SAY]** "And the git history shows it came together step by step. That's
+`simple_viz` — one clear story: Pinterest's audience is global, its revenue
+isn't. Thanks."
 
 ---
 
-### Trim to land at exactly 2:00
-Shorten the story line to: **"Revenue nearly quadrupled while users didn't
-double — so it's about earning more per user, and a US user is worth ~35× a
-Rest-of-World one. The opportunity is monetizing internationally, especially
-Europe."**
+### If you need to cut time
+Drop the git-history line at the end, and shorten the "what it means" beat to:
+**"Revenue nearly quadrupled while users didn't double, and a US user is worth
+~35× a Rest-of-World user — so the opportunity is monetizing internationally,
+especially Europe."** Keep the structure, code, data, and test beats — those
+are your proof-of-work and worth the extra seconds in a video-only submission.
 
-### Optional 5-second flourish (only if under time)
-**[DO]** `open -a "Google Chrome" examples/simple_viz_story.gif`
-**[SAY]** "…and the whole story, animated." (Use a browser — Preview won't
-animate a GIF.)
-
-### On-screen commands
+### On-screen commands (in order)
 ```bash
-python -m pip install -e .
-python -c "import simple_viz; print(simple_viz.__all__)"
-open examples/simple_viz_02_growth_line.png
-open examples/simple_viz_04_share_gap.png
-open examples/simple_viz_poster.png
+ls src/simple_viz data tests examples           # structure
+open src/simple_viz/core.py                      # (or show in editor) the code
+python -m pip install -e ".[dev]"                # install (with test deps)
+python -c "import simple_viz; print(simple_viz.__all__)"   # import + API
+python -m pytest -q                              # tests → 9 passed
+open examples/simple_viz_02_growth_line.png      # favorite chart 1
+open examples/simple_viz_04_share_gap.png        # favorite chart 2
+open examples/simple_viz_poster.png              # the full story
+git log --oneline -8                             # build history (optional)
 ```
+Note: install with `".[dev]"` (quotes matter in zsh) so `pytest` is available.
 
 ### Numbers for reference
 - Users 335M (2019) → 619M (2025), +12% YoY.

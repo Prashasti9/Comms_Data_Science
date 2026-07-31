@@ -1,113 +1,124 @@
 # simple_viz — demo script (~2:30–3:00)
 
-Video-only submission, so **show the real work**, not just the charts. Keep it
-moving — show while you talk, don't read code line by line. **[DO]** = on
-screen · **[SAY]** = say it. Terminal open (venv active, inside
-`Comms_Data_Science`) + your editor with the project open.
+Video-only submission, so **show the real work**. Show while you talk; don't
+read code line by line. **[DO]** = on screen · **[SAY]** = say it. Terminal
+open (venv active, inside `Comms_Data_Science`) + editor + a browser.
+
+Published on PyPI: **https://pypi.org/project/simple-viz-prashasti/**
 
 ---
 
 **0:00 — Hook (motion first)**
-**[DO]** Play `examples/simple_viz_story.gif` in a browser (`open -a "Google Chrome" examples/simple_viz_story.gif`) — let it animate.
+**[DO]** Play `examples/simple_viz_story.gif` in a browser (`open -a "Google Chrome" examples/simple_viz_story.gif`).
 **[SAY]** "Pinterest has a global audience — but its revenue is not global.
 That's the story my Python library, `simple_viz`, tells."
 
 **0:08 — The whole story on one page**
 **[DO]** `open examples/simple_viz_poster.png`.
-**[SAY]** "Here's all of it on one page — the growth, the revenue, and the gap
-between them. Now let me show you the library behind it."
+**[SAY]** "Here's all of it on one page. Now let me show the library behind it."
 
 **0:18 — This is a real package (structure)**
-**[DO]** Show the file tree in your editor sidebar (or run `ls src/simple_viz data tests examples`).
-**[SAY]** "It's a proper package. `src/simple_viz` holds the code —
-`core.py` has the five chart functions, `theme.py` has the shared colours and
-styling. There's a `data` folder with the real numbers as CSVs, a `tests`
-folder, a README, and packaging in `pyproject.toml`."
+**[DO]** Show the editor sidebar (or `ls src/simple_viz data tests examples`).
+**[SAY]** "It's a proper package — code in `src/simple_viz`, data as CSVs,
+tests, a README, and packaging in `pyproject.toml`."
 
 **0:32 — The code + the data**
-**[DO]** Open `src/simple_viz/core.py`, scroll once; then open one CSV, e.g. `data/pinterest_revenue.csv`.
-**[SAY]** "Each function is small — takes a pandas DataFrame, returns a
-matplotlib figure, one job each. And the data is real: I took Pinterest's 2025
-users and revenue from their earnings release and SEC filing and stored them
-in these CSVs — no scraping, no API."
+**[DO]** `open src/simple_viz/core.py` (scroll once), then `open data/pinterest_revenue.csv`.
+**[SAY]** "Small functions — DataFrame in, matplotlib figure out. The data's
+real: I took Pinterest's 2025 users and revenue from their earnings release
+and SEC filing and stored them in these CSVs."
 
-**0:50 — Install + import**
-**[DO]**
+**0:48 — It's published on PyPI**
+**[DO]** Browser: open **https://pypi.org/project/simple-viz-prashasti/** (show the live page). Then terminal:
 ```bash
-python -m pip install -e .
+pip install simple-viz-prashasti
 python -c "import simple_viz; print(simple_viz.__all__)"
 ```
-**[SAY]** "I install it in editable mode from the project root, import it, and
-there are the five functions — built with pandas and matplotlib."
+**[SAY]** "I published it to PyPI — here's the live page. Anyone can install it
+with `pip install simple-viz-prashasti` and then `import simple_viz`. Five
+functions, built on pandas and matplotlib."
+> Tip: it may say "already satisfied" since it's installed. For a clean
+> download on camera, run it in a fresh venv:
+> `python -m venv /tmp/demo && source /tmp/demo/bin/activate && pip install simple-viz-prashasti`,
+> then `deactivate` and `source .venv/bin/activate` to continue.
 
-**1:02 — Tests pass**
-**[DO]**
-```bash
-python -m pytest -q
-```
-**[SAY]** "It's tested too — nine tests confirm every function runs on the real
-data and returns a figure, plus the two calculations the library does itself.
-All passing."
+**1:04 — Tests pass**
+**[DO]** `python -m pytest -q`.
+**[SAY]** "It's tested — nine tests confirm every function runs on the real
+data and returns a figure. All passing."
 
-**1:14 — README**
+**1:16 — README**
 **[DO]** Scroll `README.md` to the function table.
 **[SAY]** "The README has install, usage, and each function next to the
 question it answers."
 
-**1:12 — Favorite chart #1: growth_line**
+**1:26 — Favorite chart #1: growth_line**
 **[DO]** `open examples/simple_viz_02_growth_line.png`.
 **[SAY]** "First favorite — the growth line, the right chart for change over
-time. Users reach a record 619 million. It starts at zero so the growth is
-honest, the title states the takeaway, and I annotated the 2021 dip so viewers
-don't have to guess."
+time. Users reach a record 619 million. Zero baseline so the growth is honest,
+a takeaway title, and the 2021 dip annotated."
 
-**1:32 — Favorite chart #2: share_gap**
+**1:44 — Favorite chart #2: share_gap**
 **[DO]** `open examples/simple_viz_04_share_gap.png`.
-**[SAY]** "Second favorite — the split. Rest of World is 58% of users but only
-7% of revenue. One category is in Pinterest red and everything else is grey,
-so colour points to the mismatch, and the values are labelled directly."
+**[SAY]** "Second favorite — the split. Rest of World is 58% of users but 7%
+of revenue. One category in red points to the mismatch; values labelled
+directly."
 
-**1:52 — What it means**
-**[DO]** `open examples/simple_viz_05_revenue_per_user.png` (the ≈35× callout).
-**[SAY]** "Together: revenue nearly quadrupled while users didn't double — so
-Pinterest earns far more per user, but unevenly. A US user is worth about 35
-times a Rest-of-World user. The opportunity is international monetisation,
-especially Europe."
+**2:02 — What it means**
+**[DO]** `open examples/simple_viz_05_revenue_per_user.png`.
+**[SAY]** "Revenue nearly quadrupled while users didn't double — so Pinterest
+earns more per user, but unevenly. A US user is worth about 35 times a
+Rest-of-World user. The opportunity is monetising internationally, especially
+Europe."
 
-**2:08 — Two problems I solved**
-**[SAY]** "Two problems. One: Python couldn't find the package because of the
-`src` layout — installing with `pip install -e .` from the project root fixed
-it. Two: matplotlib read dollar signs as math, so I disabled math parsing once
-in the shared theme."
+**2:18 — Two problems I hit (show the terminal)**
+See the two problems below — show the error, then the fix.
 
-**2:24 — Close**
-**[DO]** (optional) `git log --oneline -8` to show the build history.
-**[SAY]** "And the git history shows it came together step by step. That's
-`simple_viz` — one clear story: Pinterest's audience is global, its revenue
-isn't. Thanks."
+**2:42 — Close**
+**[SAY]** "That's `simple_viz` — published on PyPI, tested, and telling one
+story: Pinterest's audience is global, its revenue isn't. Thanks."
 
 ---
 
-### If you need to cut time
-Drop the git-history line at the end, and shorten the "what it means" beat to:
-**"Revenue nearly quadrupled while users didn't double, and a US user is worth
-~35× a Rest-of-World user — so the opportunity is monetizing internationally,
-especially Europe."** Keep the structure, code, data, and test beats — those
-are your proof-of-work and worth the extra seconds in a video-only submission.
+## The two problems (genuine — you actually hit these; both have error text you can show)
+
+### Problem 1 — PyPI upload rejected: `403 Forbidden`
+**[DO]** Show the terminal where `twine upload` printed `ERROR HTTPError: 403 Forbidden`, then the successful retry ending in `View at: https://pypi.org/project/simple-viz-prashasti/0.1.0/`.
+**[SAY]** "When I first ran `twine upload`, PyPI rejected it with a 403
+Forbidden. The prompt said 'Enter your API token' and I typed `__token__` —
+but newer twine wants the token *value* there, not the word `__token__`, which
+is only the username in the old flow. Once I enabled two-factor auth, created
+a real API token, and pasted the actual `pypi-` token, the upload went through
+and the package went live."
+
+### Problem 2 — `ModuleNotFoundError` / "not a Python project"
+**[DO]** From your home folder run `pip install -e .` → show the error `does not appear to be a Python project`, and/or `import simple_viz` → `ModuleNotFoundError`. Then `cd Comms_Data_Science`, `source .venv/bin/activate`, run it again → works.
+**[SAY]** "Early on, `pip install` failed with 'not a Python project,' and
+import threw ModuleNotFoundError — because the package uses a `src` layout and
+I was in the wrong folder, in the wrong environment. Fix: `cd` into the project
+root, activate the virtual environment, and install with `pip install -e .` —
+that links the package so imports resolve."
+
+> **Alternative code problem** (swap in if you'd rather show a library bug):
+> dollar-sign labels like `$4.2B` rendered as garbled LaTeX, because matplotlib
+> reads text between two `$` as math. Fixed with `plt.rcParams["text.parse_math"] = False`
+> set once in `theme.py`.
+
+---
 
 ### On-screen commands (in order)
 ```bash
-ls src/simple_viz data tests examples           # structure
-open src/simple_viz/core.py                      # (or show in editor) the code
-python -m pip install -e ".[dev]"                # install (with test deps)
-python -c "import simple_viz; print(simple_viz.__all__)"   # import + API
-python -m pytest -q                              # tests → 9 passed
-open examples/simple_viz_02_growth_line.png      # favorite chart 1
-open examples/simple_viz_04_share_gap.png        # favorite chart 2
-open examples/simple_viz_poster.png              # the full story
-git log --oneline -8                             # build history (optional)
+open -a "Google Chrome" examples/simple_viz_story.gif
+open examples/simple_viz_poster.png
+ls src/simple_viz data tests examples
+open src/simple_viz/core.py
+pip install simple-viz-prashasti
+python -c "import simple_viz; print(simple_viz.__all__)"
+python -m pytest -q
+open examples/simple_viz_02_growth_line.png
+open examples/simple_viz_04_share_gap.png
+open examples/simple_viz_05_revenue_per_user.png
 ```
-Note: install with `".[dev]"` (quotes matter in zsh) so `pytest` is available.
 
 ### Numbers for reference
 - Users 335M (2019) → 619M (2025), +12% YoY.

@@ -58,8 +58,11 @@ Comms_Data_Science/
 └─ .github/workflows/python-publish.yml   # (auto-added) publish-to-PyPI on release
 ```
 
-**Install name vs import name:** the package installs as `simple_viz` and imports
-as `simple_viz`. Version is `0.1.0` (first working version).
+**Install name vs import name:** it's **published on PyPI** as
+`simple-viz-prashasti` (that's the `pip install` name), and it **imports** as
+`simple_viz`. Live page: https://pypi.org/project/simple-viz-prashasti/ .
+Version is `0.1.0` (first working version). Install with
+`pip install simple-viz-prashasti`, or from source with `pip install -e .`.
 
 ---
 
@@ -151,13 +154,22 @@ chasing more saturated US users; manage to ARPU-by-region, not just MAU).
 
 ## 7. Two problems solved (for the video's "problems" section)
 
-1. **`ModuleNotFoundError` on `import simple_viz`.** Cause: the modern `src/`
-   layout means Python can't find the package until it's installed. **Fix:**
-   `python -m pip install -e .` from the project root (editable install links
-   the package so imports resolve and edits apply live).
-2. **Dollar-sign labels rendered garbled** (e.g. `$9 ... $0.27`). Cause:
-   matplotlib treats a pair of `$` as LaTeX math mode. **Fix:**
-   `plt.rcParams["text.parse_math"] = False` (set once in `theme.py`).
+1. **`twine upload` rejected with `403 Forbidden`.** Cause: at the
+   "Enter your API token" prompt I typed `__token__` — but newer twine wants
+   the token *value* there, not the literal word `__token__` (that's only the
+   username in the old flow). **Fix:** enabled two-factor auth on PyPI, created
+   a real API token, and pasted the actual `pypi-…` value → upload succeeded
+   (live at https://pypi.org/project/simple-viz-prashasti/0.1.0/).
+2. **`ModuleNotFoundError` / "does not appear to be a Python project".** Cause:
+   the modern `src/` layout means Python can't find the package until it's
+   installed, and I was in the wrong folder / wrong environment. **Fix:** `cd`
+   into the project root, activate the venv, and `python -m pip install -e .`
+   (editable install links the package so imports resolve and edits apply live).
+
+*Alternate library bug (swap in if you'd rather show code):* dollar-sign labels
+like `$4.2B` rendered as garbled LaTeX because matplotlib treats a pair of `$`
+as math mode. **Fix:** `plt.rcParams["text.parse_math"] = False` set once in
+`theme.py`.
 
 ---
 

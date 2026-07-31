@@ -29,11 +29,19 @@ The design is the point, not an afterthought:
 
 ## Install
 
+From PyPI:
+
+```bash
+pip install simple-viz-prashasti
+```
+
+Or from source (editable), run from the project root:
+
 ```bash
 python -m pip install -e .
 ```
 
-This installs `simple_viz` and its dependencies (`matplotlib`, `pandas`).
+Either way, you then `import simple_viz`. Dependencies: `matplotlib`, `pandas`.
 
 ## Use
 
